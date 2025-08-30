@@ -8,18 +8,19 @@ pipeline {
         AWS_SECRET_ACCESS_KEY = credentials('AWS_SECRET_ACCESS_KEY')
     }
 
-    agent { label 'terraform1' }
+    agent any  // Git clone runs on Windows master
 
     stages {
         stage('Clone Terraform Repo') {
             steps {
                 dir('terraform') {
-                    sh 'git clone https://github.com/Maresh971/Terraform-Jenkins.git .'
+                    bat 'git clone https://github.com/Maresh971/Terraform-Jenkins.git .'  // Windows Git
                 }
             }
         }
 
-        stage('Plan') {
+        stage('Terraform Plan') {
+            agent { label 'terraform1' }  // Switch to Linux agent
             steps {
                 dir('terraform') {
                     sh 'terraform init'
@@ -44,7 +45,8 @@ pipeline {
             }
         }
 
-        stage('Apply') {
+        stage('Terraform Apply') {
+            agent { label 'terraform1' }  // Ensure apply runs on Linux
             steps {
                 dir('terraform') {
                     sh 'terraform apply -input=false tfplan'
