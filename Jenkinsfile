@@ -1,55 +1,27 @@
 pipeline {
-    parameters {
-        booleanParam(name: 'autoApprove', defaultValue: false, description: 'Automatically run apply after generating plan?')
-    }
-
-    environment {
-        AWS_ACCESS_KEY_ID     = credentials('AWS_ACCESS_KEY_ID')
-        AWS_SECRET_ACCESS_KEY = credentials('AWS_SECRET_ACCESS_KEY')
-    }
-
-    agent any  // Git clone runs on Windows master
-
+    agent any
     stages {
+        stage('Checkout') {
+            steps {
+                git branch: 'main',
+                    credentialsId: 'git',
+                    url: 'https://github.com/Maresh971/Terraform-Jenkins.git'
+            }
+        }
         stage('Clone Terraform Repo') {
             steps {
                 dir('terraform') {
-                    bat 'git clone https://github.com/Maresh971/Terraform-Jenkins.git .'  // Windows Git
+                    sh 'git clone https://github.com/Maresh971/Terraform-Jenkins.git'
                 }
             }
         }
-
         stage('Terraform Plan') {
-            agent { label 'terraform1' }  // Switch to Linux agent
             steps {
                 dir('terraform') {
-                    sh 'terraform init'
-                    sh 'terraform plan -out=tfplan'
-                    sh 'terraform show -no-color tfplan > tfplan.txt'
-                }
-            }
-        }
-
-        stage('Approval') {
-            when {
-                not {
-                    equals expected: true, actual: params.autoApprove
-                }
-            }
-            steps {
-                script {
-                    def plan = readFile 'terraform/tfplan.txt'
-                    input message: "Do you want to apply the plan?",
-                          parameters: [text(name: 'Plan', description: 'Please review the plan', defaultValue: plan)]
-                }
-            }
-        }
-
-        stage('Terraform Apply') {
-            agent { label 'terraform1' }  // Ensure apply runs on Linux
-            steps {
-                dir('terraform') {
-                    sh 'terraform apply -input=false tfplan'
+                    sh '''
+                        terraform init
+                        terraform plan
+                    '''
                 }
             }
         }
