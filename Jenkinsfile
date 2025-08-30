@@ -8,7 +8,7 @@ pipeline {
         AWS_SECRET_ACCESS_KEY = credentials('AWS_SECRET_ACCESS_KEY')
     }
 
-    agent any
+    agent { label 'terraform' } // Ensure your Linux agent is labeled 'terraform'
 
     stages {
         stage('Checkout') {
@@ -22,9 +22,9 @@ pipeline {
         stage('Plan') {
             steps {
                 dir('terraform') {
-                    bat 'terraform init'
-                    bat 'terraform plan -out=tfplan'
-                    bat 'terraform show -no-color tfplan > tfplan.txt'
+                    sh 'terraform init'
+                    sh 'terraform plan -out=tfplan'
+                    sh 'terraform show -no-color tfplan > tfplan.txt'
                 }
             }
         }
@@ -47,7 +47,7 @@ pipeline {
         stage('Apply') {
             steps {
                 dir('terraform') {
-                    bat 'terraform apply -input=false tfplan'
+                    sh 'terraform apply -input=false tfplan'
                 }
             }
         }
