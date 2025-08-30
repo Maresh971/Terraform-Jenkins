@@ -8,17 +8,9 @@ pipeline {
         AWS_SECRET_ACCESS_KEY = credentials('AWS_SECRET_ACCESS_KEY')
     }
 
-    agent any  // All stages run on the same Linux machine
+    agent any
 
     stages {
-        stage('Clone Terraform Repo') {
-            steps {
-                dir('terraform') {
-                    sh 'git clone https://github.com/Maresh971/Terraform-Jenkins.git .'
-                }
-            }
-        }
-
         stage('Terraform Plan') {
             steps {
                 dir('terraform') {
