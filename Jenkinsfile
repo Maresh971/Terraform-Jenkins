@@ -8,7 +8,7 @@ pipeline {
         AWS_SECRET_ACCESS_KEY = credentials('AWS_SECRET_ACCESS_KEY')
     }
 
-    agent { label 'terraform' } // Ensure your Linux agent is labeled 'terraform'
+    agent { label 'terraform1' } // Ensure your Linux agent is labeled 'terraform1'
 
     stages {
         stage('Checkout') {
