@@ -14,8 +14,8 @@ pipeline {
         stage('Checkout') {
             steps {
                 dir('terraform') {
-                    // Explicitly use Linux Git binary
-                    sh '/usr/bin/git clone https://github.com/Maresh971/Terraform-Jenkins.git .'
+                    // Use system Git on Linux agent
+                    sh 'git clone https://github.com/Maresh971/Terraform-Jenkins.git .'
                 }
             }
         }
