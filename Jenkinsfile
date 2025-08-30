@@ -8,13 +8,12 @@ pipeline {
         AWS_SECRET_ACCESS_KEY = credentials('AWS_SECRET_ACCESS_KEY')
     }
 
-    agent { label 'terraform1' } // Ensure your Linux agent is labeled 'terraform1'
+    agent { label 'terraform1' }
 
     stages {
-        stage('Checkout') {
+        stage('Clone Terraform Repo') {
             steps {
                 dir('terraform') {
-                    // Use system Git on Linux agent
                     sh 'git clone https://github.com/Maresh971/Terraform-Jenkins.git .'
                 }
             }
